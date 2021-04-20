@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "ffmpeg-cli": "^2.7.2",
     "inkscape": "^3.1.1",
     "svg-bounding-box": "^0.2.1"
   }

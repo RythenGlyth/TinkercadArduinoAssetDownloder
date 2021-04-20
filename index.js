@@ -3,9 +3,14 @@ const axios = require("axios").default;
 var Inkscape = require('inkscape');
 var fs = require('fs');
 const { Readable } = require("stream")
+const ffmpeg = require("ffmpeg-cli");
+
+const reencode = true;
+const delUnReen = true;
+const size = 20;
 
 axios("https://editor.tinkercad.com/assets_30ucufg/js/components/collections/basic-components.json").then(async (res) => {
-    res.data.forEach(async el => {
+    res.data.filter((x, i) => true).forEach(async el => {
         var footprint = el.footprints ? el.footprints[0] : el.footprint;
         if(footprint.name != "Category") {
             var footBod = await new Promise((resolve, reject) => {
@@ -34,11 +39,19 @@ axios("https://editor.tinkercad.com/assets_30ucufg/js/components/collections/bas
                         fs.writeFile(__dirname + "/out/" + elName + "/" + footPrntName + ".svg", replaced, () => {
     
                         });
-                        Readable.from([replaced]).pipe(new Inkscape([
+                        /** @type {WritableStream} */
+                        var piped = Readable.from([replaced]).pipe(new Inkscape([
                             "--export-type=png",
-                            "--export-width=" + Math.round(boundingBox.width * 20),
+                            "--export-width=" + Math.round(boundingBox.width * size),
                             "--export-background-opacity=0"
                         ])).pipe(fs.createWriteStream(__dirname + "/out/" + elName + "/" + footPrntName + ".png"));
+                        if(reencode) piped.on('finish', () => {
+                            ffmpeg.run("-i \"" + __dirname + "/out/" + elName + "/" + footPrntName + ".png" + "\" \"" + __dirname + "/out/" + elName + "/" + footPrntName + "Reencoded.png\"").then(() => {
+                                if(delUnReen) fs.rm(__dirname + "/out/" + elName + "/" + footPrntName + ".png", () => {});
+                            }).catch((err) => {
+                                console.log(err);
+                            });
+                        });
                     })
                 }
             }
