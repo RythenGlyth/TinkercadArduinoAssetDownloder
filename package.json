@@ -1,0 +1,16 @@
+{
+  "name": "thinkercadimagedownloader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "inkscape": "^3.1.1",
+    "svg-bounding-box": "^0.2.1"
+  }
+}
